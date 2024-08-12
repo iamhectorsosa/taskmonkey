@@ -36,6 +36,7 @@ var addCmd = &cobra.Command{
 		if err := t.insert(args[0], project); err != nil {
 			return err
 		}
+		fmt.Println("Task successfully added!")
 		return nil
 	},
 }
@@ -64,7 +65,12 @@ var deleteCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		return t.delete(uint(id))
+		err = t.delete(uint(id))
+		if err != nil {
+			return err
+		}
+		fmt.Println("Task successfully deleted!")
+		return nil
 	},
 }
 
@@ -104,7 +110,12 @@ var updateCmd = &cobra.Command{
 			status = todo.String()
 		}
 		newTask := task{uint(id), name, project, status, time.Time{}}
-		return t.update(newTask)
+		err = t.update(newTask)
+		if err != nil {
+			return err
+		}
+		fmt.Println("Task successfully updated!")
+		return nil
 	},
 }
 
@@ -150,7 +161,7 @@ func setupTable(tasks []task) *table.Table {
 		Rows(rows...).
 		StyleFunc(func(row, col int) lipgloss.Style {
 			if row == 0 {
-				return lipgloss.NewStyle().Align(lipgloss.Center)
+				return lipgloss.NewStyle().Foreground(lipgloss.Color("246")).Align(lipgloss.Center)
 			}
 			if row%2 == 0 {
 				return lipgloss.NewStyle().Foreground(lipgloss.Color("246")).Padding(0, 3)

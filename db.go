@@ -43,36 +43,6 @@ type task struct {
 	Created               time.Time
 }
 
-func (t task) FilterValue() string {
-	return t.Name
-}
-
-func (t task) Title() string {
-	return t.Name
-}
-
-func (t task) Description() string {
-	return t.Project
-}
-
-func (s status) Next() int {
-	if s == done {
-		return int(todo)
-	}
-	return int(s + 1)
-}
-
-func (s status) Prev() int {
-	if s == todo {
-		return int(done)
-	}
-	return int(s - 1)
-}
-
-func (s status) Int() int {
-	return int(s)
-}
-
 func (t *taskDB) getTask(id uint) (task, error) {
 	var task task
 	err := t.db.QueryRow("SELECT * FROM tasks WHERE id = ?", id).Scan(
@@ -87,7 +57,7 @@ func (t *taskDB) getTask(id uint) (task, error) {
 
 func (t *taskDB) getTasks() ([]task, error) {
 	var tasks []task
-	rows, err := t.db.Query("SELECT * FROM tasks")
+	rows, err := t.db.Query("SELECT * FROM tasks ORDER BY created DESC")
 	if err != nil {
 		return tasks, fmt.Errorf("unable to get values: %w", err)
 	}
