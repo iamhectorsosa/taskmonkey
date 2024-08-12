@@ -15,6 +15,9 @@ var rootCmd = &cobra.Command{
 	Short: "A CLI task management tool for ~slaying~ your to do list.",
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) == 0 {
+			return listCmd.RunE(cmd, args)
+		}
 		return cmd.Help()
 	},
 }
@@ -132,6 +135,10 @@ var listCmd = &cobra.Command{
 		tasks, err := t.getTasks()
 		if err != nil {
 			return err
+		}
+		if len(tasks) == 0 {
+			fmt.Println("Add a task to get started")
+			return nil
 		}
 		fmt.Print(setupTable(tasks))
 		return nil

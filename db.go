@@ -101,6 +101,20 @@ func (t *taskDB) getTasksByStatus(status string) ([]task, error) {
 	return tasks, err
 }
 
+func (t *taskDB) insert(name, project string) error {
+	_, err := t.db.Exec("INSERT INTO tasks(name, project, status, created) VALUES(?, ?, ?, ?)", name, project, todo.String(), time.Now())
+	return err
+}
+
+func (t *taskDB) delete(id uint) error {
+	_, err := t.getTask(id)
+	if err != nil {
+		return err
+	}
+	_, err = t.db.Exec("DELETE FROM tasks WHERE id = ?", id)
+	return err
+}
+
 func (orig *task) merge(t task) {
 	uValues := reflect.ValueOf(&t).Elem()
 	oValues := reflect.ValueOf(orig).Elem()
@@ -117,16 +131,6 @@ func (orig *task) merge(t task) {
 			}
 		}
 	}
-}
-
-func (t *taskDB) insert(name, project string) error {
-	_, err := t.db.Exec("INSERT INTO tasks(name, project, status, created) VALUES(?, ?, ?, ?)", name, project, todo.String(), time.Now())
-	return err
-}
-
-func (t *taskDB) delete(id uint) error {
-	_, err := t.db.Exec("DELETE FROM tasks WHERE id = ?", id)
-	return err
 }
 
 func (t *taskDB) update(task task) error {
