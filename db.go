@@ -78,29 +78,6 @@ func (t *taskDB) getTasks() ([]task, error) {
 	return tasks, err
 }
 
-func (t *taskDB) getTasksByStatus(status string) ([]task, error) {
-	var tasks []task
-	rows, err := t.db.Query("SELECT * FROM tasks WHERE status = ?", status)
-	if err != nil {
-		return tasks, fmt.Errorf("unable to get values: %w", err)
-	}
-	for rows.Next() {
-		var task task
-		err = rows.Scan(
-			&task.ID,
-			&task.Name,
-			&task.Project,
-			&task.Status,
-			&task.Created,
-		)
-		if err != nil {
-			return tasks, err
-		}
-		tasks = append(tasks, task)
-	}
-	return tasks, err
-}
-
 func (t *taskDB) insert(name, project string) error {
 	_, err := t.db.Exec("INSERT INTO tasks(name, project, status, created) VALUES(?, ?, ?, ?)", name, project, todo.String(), time.Now())
 	return err

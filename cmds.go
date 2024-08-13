@@ -99,6 +99,9 @@ var updateCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		if prog > int(done) {
+			return fmt.Errorf("unable to set status: %d", prog)
+		}
 		id, err := strconv.Atoi(args[0])
 		if err != nil {
 			return err
